@@ -1,0 +1,32 @@
+阿里云部署过程:
+
+1.使用ssh方式连接远程主机
+    将下载的私匙更改权限: chmod 400 xxx.pem
+    连接命令: ssh -i xxx.pem root@public_ip
+
+2.创建正常的用户, 因为初始用户只有root,这个一般用不到
+    useradd -r -m -s /bin/bash pan_jie (添加用户,注意option要准确,有可能会没有目录文件)
+    passwd pan_jie (为用户设置密码, 这个密码在sudo时会用到)
+    vim /etc/sudoers 在文件中加入 pan_jie ALL=(ALL:ALL) ALL (为用户添加sudo权限)
+
+3.创建正常用户的ssh连接, 我们初始化只有root的ssh连接
+    创建密匙对:在.ssh文件夹下面 ssh-keygen -t rsa -P '', P参数后面说明password为空, 然后输入密匙对的名字比如pan_jie, 最终生成的pan_jie和pan_jie.pub两个文件
+    发送至远程主机: scp -i xxx.pem pan_jie.pub root@public_ip:/home/pan_jie,通过root连接我们可以把公匙文件发送到远程主机上
+    配置远程ssh: 在用户目录pan_jie下, mkdir .ssh && touch .ssh/authorized_keys && cat pan_jie.pub >> .ssh/authorized_keys配置完成
+
+4.为了部署一个webpy的应用, 我们至少需要python, pip, webpy, nginx, uwsgi等,先逐个检查是否安装
+    webpy: (sudo) pip install web.py
+    uwsgi: sudo pip install uwsgi
+    nginx: sudo apt-get update && sudo apt-get install nginx
+    git: sudo apt-get install git
+
+5.写webpy程序和nginx的server配置
+
+
+
+
+    
+
+
+
+
